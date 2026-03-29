@@ -2,4 +2,3 @@ fastf1
 numpy
 pandas
 plotly
-webbrowser
