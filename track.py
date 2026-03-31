@@ -1,6 +1,12 @@
+"""
+Track module for loading, rotating, and scaling F1 circuit geometry
+from FastF1 session data.
+"""
+
 import numpy as np
 
-from config import W, H, MARGIN
+from config import H, MARGIN, W
+
 
 def rotate(xy, *, angle):
     """
@@ -16,8 +22,8 @@ def rotate(xy, *, angle):
     """
     rot_matrix = np.array([[np.cos(angle), np.sin(angle)],
                            [-np.sin(angle), np.cos(angle)]])
-    
     return xy @ rot_matrix
+
 
 def get_track_data(session):
     """
@@ -25,7 +31,7 @@ def get_track_data(session):
 
     Args:
         session: FastF1 session object.
-        
+
     Returns:
         x_cords (list): List of X coordinates for the track.
         y_cords (list): List of Y coordinates for the track.
@@ -34,7 +40,6 @@ def get_track_data(session):
         scale (float): Scaling factor for the track.
         track_angle (float): Rotation angle of the track in radians.
     """
-
     # use fastest lap for the most complete and clean track outline
     lap = session.laps.pick_fastest()
     pos = lap.get_pos_data()
@@ -42,6 +47,7 @@ def get_track_data(session):
     circuit_info = session.get_circuit_info()
 
     track = pos.loc[:, ['X', 'Y']].to_numpy()
+
     # rotate track to match circuit's real-world orientation
     track_angle = circuit_info.rotation / 180 * np.pi
     rotated_track = rotate(track, angle=track_angle)
@@ -51,8 +57,10 @@ def get_track_data(session):
 
     span_x = max_x - min_x
     span_y = max_y - min_y
-    # scale track to fit within the window dimensions while preserving aspect ratio
-    scale = min((W - 2*MARGIN) / span_x, (H - 2*MARGIN) / span_y)
+
+    # scale track to fit within the window dimensions
+    # while preserving aspect ratio
+    scale = min((W - 2 * MARGIN) / span_x, (H - 2 * MARGIN) / span_y)
 
     pts = []
     for x, y in rotated_track:

@@ -1,9 +1,14 @@
+"""
+Simulation module for interpolating driver positions and building
+Plotly animation frames for the F1 race simulation.
+"""
+
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from track import rotate
 from config import MARGIN
+from track import rotate
 
 
 def get_simulation_data(session, track_angle, min_x, min_y, scale):
@@ -21,7 +26,6 @@ def get_simulation_data(session, track_angle, min_x, min_y, scale):
         frames (list): List of Plotly frames for the simulation.
         driver_colors (dict): Dictionary mapping drivers to their colors.
     """
-
     # use race start time to skip installation laps and pre-race wait
     start = session.laps['LapStartTime'].min()
     end = max(data['SessionTime'].max() for data in session.pos_data.values())
@@ -38,8 +42,10 @@ def get_simulation_data(session, track_angle, min_x, min_y, scale):
         x = driver_data['X'].interpolate(method='index')
         y = driver_data['Y'].interpolate(method='index')
 
-        x_interp[driver] = np.interp(time_axis.total_seconds(), driver_data.index.total_seconds(), x)
-        y_interp[driver] = np.interp(time_axis.total_seconds(), driver_data.index.total_seconds(), y)
+        time_seconds = time_axis.total_seconds()
+        data_seconds = driver_data.index.total_seconds()
+        x_interp[driver] = np.interp(time_seconds, data_seconds, x)
+        y_interp[driver] = np.interp(time_seconds, data_seconds, y)
 
     # rotate and scale driver positions to match the track coordinate system
     x_scaled = {}
@@ -68,8 +74,13 @@ def get_simulation_data(session, track_angle, min_x, min_y, scale):
             colors.append(driver_colors[driver])
 
         frames.append(go.Frame(
-            data=[go.Scatter(x=x_pos, y=y_pos, mode='markers', marker=dict(color=colors, size=10))],
+            data=[go.Scattergl(
+                x=x_pos,
+                y=y_pos,
+                mode='markers',
+                marker=dict(color=colors, size=10)
+            )],
             traces=[1]
-    ))
-        
+        ))
+
     return frames, driver_colors
