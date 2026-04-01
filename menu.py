@@ -38,4 +38,8 @@ def get_user_selection():
         "Calculate driver consistency scores? (Warning: this may take a few minutes)"
     ).ask()
 
-    return int(year), grand_prix, session_type, run_analysis
+    run_lap_time_prediction = q.confirm(
+        "Train a machine learning model to predict lap times?"
+    ).ask()
+
+    return int(year), grand_prix, session_type, run_analysis, run_lap_time_prediction

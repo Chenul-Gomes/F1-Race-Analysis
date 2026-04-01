@@ -94,11 +94,15 @@ def build_and_show(x_cords, y_cords, frames):
         </script></body>'''
     )
 
+    # ensure output directory exists
+    os.makedirs('output', exist_ok=True)
+
     # clean up old simulation files
-    for old_file in glob.glob('f1_simulation*.html'):
+    for old_file in glob.glob('output/f1_simulation*.html'):
         os.remove(old_file)
 
-    with open('f1_simulation.html', 'w') as f:
+    with open('output/f1_simulation.html', 'w') as f:
         f.write(html)
 
-    webbrowser.open('f1_simulation.html')
+    filepath = os.path.abspath('output/f1_simulation.html')
+    webbrowser.open(filepath)

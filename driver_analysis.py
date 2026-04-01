@@ -6,11 +6,14 @@ to rank drivers from most to least consistent.
 """
 
 import webbrowser
+import os
 
 import pandas as pd
 import plotly.graph_objects as go
 from scipy.stats import linregress
 
+
+os.makedirs('output', exist_ok=True)
 
 def lap_time_consistency(session):
     """
@@ -72,10 +75,11 @@ def plot_consistency(session):
     )
 
     html = fig.to_html(include_plotlyjs='cdn', full_html=True)
-    with open('consistency.html', 'w') as f:
+    with open('output/consistency.html', 'w') as f:
         f.write(html)
 
-    webbrowser.open('consistency.html')
+    filepath = os.path.abspath('output/consistency.html')
+    webbrowser.open(filepath)
 
 
 def tyre_degradation(session):
@@ -153,10 +157,11 @@ def plot_tyre_degradation(session):
     )
 
     html = fig.to_html(include_plotlyjs='cdn', full_html=True)
-    with open('tyre_degradation.html', 'w') as f:
+    with open('output/tyre_degradation.html', 'w') as f:
         f.write(html)
 
-    webbrowser.open('tyre_degradation.html')
+    filepath = os.path.abspath('output/tyre_degradation.html')
+    webbrowser.open(filepath)
 
 
 def braking_precision(session):
@@ -236,10 +241,11 @@ def plot_braking_precision(session):
     )
 
     html = fig.to_html(include_plotlyjs='cdn', full_html=True)
-    with open('braking_precision.html', 'w') as f:
+    with open('output/braking_precision.html', 'w') as f:
         f.write(html)
 
-    webbrowser.open('braking_precision.html')
+    filepath = os.path.abspath('output/braking_precision.html')
+    webbrowser.open(filepath)
 
 
 def normalize(value, all_values):
@@ -347,7 +353,8 @@ def plot_overall_consistency(session):
     )
 
     html = fig.to_html(include_plotlyjs='cdn', full_html=True)
-    with open('overall_consistency.html', 'w') as f:
+    with open('output/overall_consistency.html', 'w') as f:
         f.write(html)
 
-    webbrowser.open('overall_consistency.html')
+    filepath = os.path.abspath('output/overall_consistency.html')
+    webbrowser.open(filepath)
